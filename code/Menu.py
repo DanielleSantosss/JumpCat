@@ -4,7 +4,6 @@ from pygame.font import Font
 
 from code.Const import WINDOW_WIDTH, COLOR_BUE, MENU_OPTION, COLOR_WHITE
 
-
 class Menu:
     def __init__(self, window):
         self.window = window
@@ -22,6 +21,7 @@ class Menu:
         self.window.blit(source=text_surf, dest=text_rect)
 
     def run(self):
+        menu_option = 0
         pygame.mixer.music.load('./assets/Menu.mp3')
         pygame.mixer.music.play(-1)
 
@@ -32,7 +32,10 @@ class Menu:
             self.window.blit(self.cat_surf, self.cat_rect)
 
             for i in range(len(MENU_OPTION)):
-                self.menu_text(30, MENU_OPTION[i], COLOR_WHITE, ((WINDOW_WIDTH / 2), 200 + 25 * i))
+                if i == menu_option:
+                    self.menu_text(30, MENU_OPTION[i], COLOR_BUE, ((WINDOW_WIDTH / 2), 200 + 25 * i))
+                else:
+                    self.menu_text(30, MENU_OPTION[i], COLOR_WHITE, ((WINDOW_WIDTH / 2), 200 + 25 * i))
 
             pygame.display.flip()
 
@@ -40,5 +43,40 @@ class Menu:
                 if event.type == pygame.QUIT:
                     self.running = False
                     return False
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_DOWN:
+                        if menu_option < len(MENU_OPTION) - 1:
+                            menu_option += 1
+                        else:
+                            menu_option = 0
+                    if event.key == pygame.K_UP:
+                        if menu_option > 0:
+                            menu_option -= 1
+                        else:
+                            menu_option = len(MENU_OPTION) - 1
+                    if event.key == pygame.K_RETURN:
+                        return MENU_OPTION[menu_option]
+
+                if event.type == pygame.MOUSEMOTION:
+                    mouse_pos = pygame.mouse.get_pos()
+                    for i in range(len(MENU_OPTION)):
+                        text_rect = pygame.Rect(
+                            (WINDOW_WIDTH / 2 - 100, 200 + 25 * i - 15),
+                            (200, 30)
+                        )
+                        if text_rect.collidepoint(mouse_pos):
+                            menu_option = i
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    for i in range(len(MENU_OPTION)):
+                        text_rect = pygame.Rect(
+                            (WINDOW_WIDTH / 2 - 100, 200 + 25 * i - 15),
+                            (200, 30)
+                        )
+                        if text_rect.collidepoint(mouse_pos):
+                            menu_option = i
+                            return MENU_OPTION[menu_option]
 
         return True
