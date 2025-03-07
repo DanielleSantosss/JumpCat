@@ -7,11 +7,11 @@ from code.Const import WINDOW_WIDTH, COLOR_BUE, MENU_OPTION, COLOR_WHITE
 class Menu:
     def __init__(self, window):
         self.window = window
-        self.surf = pygame.image.load('./assets/Menu.png')
+        self.surf = pygame.image.load('./assets/Menu.png').convert_alpha()
         self.rect = self.surf.get_rect()
         self.running = True
 
-        self.cat_surf = pygame.image.load('./assets/Cat.png').convert_alpha()
+        self.cat_surf = pygame.image.load('./assets/Player1.png').convert_alpha()
         self.cat_rect = self.cat_surf.get_rect()
 
     def menu_text(self, text_size: int, text: str, text_color: tuple, text_center_pos: tuple):
@@ -27,15 +27,15 @@ class Menu:
 
         while self.running:
             self.window.blit(self.surf, self.rect)
-            self.menu_text(70, "Jump Cat", COLOR_BUE, ((WINDOW_WIDTH / 2), 70))
+            self.menu_text(70, "Jump Cat", COLOR_BUE, ((WINDOW_WIDTH / 2), 90))
             self.cat_rect.center = (WINDOW_WIDTH / 2, 140)
             self.window.blit(self.cat_surf, self.cat_rect)
 
             for i in range(len(MENU_OPTION)):
                 if i == menu_option:
-                    self.menu_text(30, MENU_OPTION[i], COLOR_BUE, ((WINDOW_WIDTH / 2), 200 + 25 * i))
+                    self.menu_text(35, MENU_OPTION[i], COLOR_BUE, ((WINDOW_WIDTH / 2), 200 + 25 * i))
                 else:
-                    self.menu_text(30, MENU_OPTION[i], COLOR_WHITE, ((WINDOW_WIDTH / 2), 200 + 25 * i))
+                    self.menu_text(35, MENU_OPTION[i], COLOR_WHITE, ((WINDOW_WIDTH / 2), 200 + 25 * i))
 
             pygame.display.flip()
 
