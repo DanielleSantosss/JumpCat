@@ -5,10 +5,12 @@ import pygame
 from pygame import Surface, Rect
 from pygame.font import Font
 
-from code.Const import COLOR_WHITE, EVENT_ENEMY, SPAWN_TIME
+from code.Const import COLOR_WHITE, EVENT_ENEMY, SPAWN_TIME, COLOR_GREEN
 from code.Entity import Entity
 from code.EntityFactory import EntityFactory
+from code.EntityMediator import EntityMediator
 from code.Player import Player
+
 
 class Level:
     def __init__(self, window, name, game_mode):
@@ -56,12 +58,18 @@ class Level:
                 if isinstance(entity, Entity):
                     self.window.blit(entity.surface, entity.rect)
                     entity.move()
+                    if entity.name == 'Player1':
+                        self.level_text(15, f'Player - Vida: {entity.health} | Pontuação: {entity.score}', COLOR_GREEN,
+                                        (10, 36))
 
             self.level_text(14, f'{self.name} - Timeout: {self.timeout / 1000 :.1f}s', COLOR_WHITE, (10, 5))
             self.level_text(14, f'FPS: {clock.get_fps() :.0f}', COLOR_WHITE, (10, 16))
-            self.level_text(14, f'Entidades: {len(self.entity_list)}', COLOR_WHITE, (10, 25))
+            self.level_text(14, f'Entidades: {len(self.entity_list)}', COLOR_WHITE, (10, 26))
 
             pygame.display.flip()
+
+            EntityMediator.verify_collision(entity_list=self.entity_list)
+            EntityMediator.verify_health(entity_list=self.entity_list)
 
         pygame.quit()
         sys.exit()
