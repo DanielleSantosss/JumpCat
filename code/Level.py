@@ -5,25 +5,29 @@ import pygame
 from pygame import Surface, Rect
 from pygame.font import Font
 
-from code.Const import COLOR_WHITE, EVENT_ENEMY, SPAWN_TIME, COLOR_GREEN
+from code.Const import COLOR_WHITE, EVENT_ENEMY, SPAWN_TIME, COLOR_GREEN, EVENT_TIMEOUT, TIMEOUT_STEP, GAMEOVER_OPTION
 from code.Entity import Entity
 from code.EntityFactory import EntityFactory
 from code.EntityMediator import EntityMediator
+from code.GameOver import GameOver
 from code.Player import Player
 
 
 class Level:
-    def __init__(self, window, name, game_mode):
+    def __init__(self, window: Surface, name: str, game_mode: str, player_score: list[int]):
         self.window = window
         self.name = name
         self.game_mode = game_mode
         self.entity_list: list[Entity] = []
-        self.entity_list.extend(EntityFactory.get_entity('Level1Bg'))
-        self.entity_list.extend(EntityFactory.get_entity('Player1'))
-        self.timeout = 20000
+        self.entity_list.extend(EntityFactory.get_entity(self.name + 'Bg'))
+        player = EntityFactory.get_entity('Player1')[0]
+        player.score = player_score[0]
+        self.entity_list.append(player)
+        self.timeout = 30000
         pygame.time.set_timer(EVENT_ENEMY, SPAWN_TIME)
+        pygame.time.set_timer(EVENT_TIMEOUT, TIMEOUT_STEP)
 
-    def run(self):
+    def run(self, player_score: list[int]):
         pygame.mixer_music.load(f'./assets/{self.name}.mp3')
         pygame.mixer_music.play(-1)
         clock = pygame.time.Clock()
@@ -39,6 +43,21 @@ class Level:
                     choice = random.choice(('Enemy1', 'Enemy2'))
                     new_enemies = EntityFactory.get_entity(choice)
                     self.entity_list.extend(new_enemies)
+                if event.type == EVENT_TIMEOUT:
+                    self.timeout -= TIMEOUT_STEP
+                    if self.timeout == 0:
+                        for entity in self.entity_list:
+                            if isinstance(entity, Player) and entity.name == 'Player1':
+                                player_score[0] = entity.score
+                        return True
+
+                found_player = False
+                for entity in self.entity_list:
+                    if isinstance(entity, Player):
+                        found_player = True
+
+                if not found_player:
+                    return False
 
             keys = pygame.key.get_pressed()
             for entity in self.entity_list:
@@ -70,6 +89,17 @@ class Level:
 
             EntityMediator.verify_collision(entity_list=self.entity_list)
             EntityMediator.verify_health(entity_list=self.entity_list)
+
+            for entity in self.entity_list:
+                if isinstance(entity, Player) and entity.health <= 0:
+                    pygame.mixer_music.stop()
+                    game_over = GameOver(self.window)
+                    choice = game_over.run()
+
+                    if choice == GAMEOVER_OPTION[0]:
+                        return True
+                    elif choice == GAMEOVER_OPTION[1]:
+                        return False
 
         pygame.quit()
         sys.exit()
