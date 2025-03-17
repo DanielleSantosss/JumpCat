@@ -12,25 +12,31 @@ class EntityMediator:
         if isinstance(entity, Enemy):
             if entity.rect.right < 0:
                 entity.health = 0
+                entity.collided_once = False
 
     @staticmethod
     def __verify_collision_entity(entity_one, entity_two):
-        if not isinstance(entity_one, Enemy) and isinstance(entity_two, Enemy):
+        if isinstance(entity_one, Player) and isinstance(entity_two, Enemy):
             current_time = pygame.time.get_ticks()
             time_since_last_damage = (current_time - entity_one.last_damage) / 1000
 
-            if time_since_last_damage >= 2:
-                if (entity_one.rect.right >= entity_two.rect.left and
-                        entity_one.rect.left <= entity_two.rect.right and
-                        entity_one.rect.bottom >= entity_two.rect.top and
-                        entity_one.rect.top <= entity_two.rect.bottom):
+            if (entity_one.rect.right >= entity_two.rect.left and
+                    entity_one.rect.left <= entity_two.rect.right and
+                    entity_one.rect.bottom >= entity_two.rect.top and
+                    entity_one.rect.top <= entity_two.rect.bottom):
+                if time_since_last_damage >= 2:
                     entity_one.health -= entity_two.damage
                     entity_one.last_damage = current_time
+                entity_two.collided = True
+                entity_two.collided_once = True
+            else:
+                entity_two.collided = False
 
     @staticmethod
     def __give_score(player: Player, enemy: Enemy):
         if player.rect.left > enemy.rect.right and not enemy.passed:
-            player.score += enemy.score
+            if not enemy.collided_once:
+                player.score += enemy.score
             enemy.passed = True
 
     @staticmethod
@@ -40,10 +46,12 @@ class EntityMediator:
             EntityMediator.__verify_collision_window(entity_one)
             for j in range(i + 1, len(entity_list)):
                 entity_two = entity_list[j]
-                EntityMediator.__verify_collision_entity(entity_one, entity_two)
+
                 if isinstance(entity_one, Player) and isinstance(entity_two, Enemy):
+                    EntityMediator.__verify_collision_entity(entity_one, entity_two)
                     EntityMediator.__give_score(entity_one, entity_two)
                 elif isinstance(entity_two, Player) and isinstance(entity_one, Enemy):
+                    EntityMediator.__verify_collision_entity(entity_two, entity_one)
                     EntityMediator.__give_score(entity_two, entity_one)
 
     @staticmethod
