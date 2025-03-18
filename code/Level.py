@@ -5,7 +5,7 @@ import pygame
 from pygame import Surface, Rect
 from pygame.font import Font
 
-from code.Const import COLOR_WHITE, EVENT_ENEMY, SPAWN_TIME, COLOR_GREEN, EVENT_TIMEOUT, TIMEOUT_STEP, GAMEOVER_OPTION
+from code.Const import COLOR_WHITE, EVENT_ENEMY, SPAWN_TIME, COLOR_GREEN, EVENT_TIMEOUT, TIMEOUT_STEP
 from code.Entity import Entity
 from code.EntityFactory import EntityFactory
 from code.EntityMediator import EntityMediator
@@ -93,13 +93,9 @@ class Level:
             for entity in self.entity_list:
                 if isinstance(entity, Player) and entity.health <= 0:
                     pygame.mixer_music.stop()
+                    pygame.time.delay(500)
                     game_over = GameOver(self.window)
                     choice = game_over.run()
-
-                    if choice == GAMEOVER_OPTION[0]:
-                        return True
-                    elif choice == GAMEOVER_OPTION[1]:
-                        return False
 
         pygame.quit()
         sys.exit()

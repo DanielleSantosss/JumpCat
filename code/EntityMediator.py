@@ -4,8 +4,12 @@ from code.Enemy import Enemy
 from code.Entity import Entity
 from code.Player import Player
 
+pygame.mixer.init()
+
 
 class EntityMediator:
+    _damage_sound = pygame.mixer.Sound('./assets/Meow.mp3')
+    pygame.mixer.music.set_volume(0.5)
 
     @staticmethod
     def __verify_collision_window(entity: Entity):
@@ -27,6 +31,8 @@ class EntityMediator:
                 if time_since_last_damage >= 2:
                     entity_one.health -= entity_two.damage
                     entity_one.last_damage = current_time
+                    EntityMediator._damage_sound.play()
+
                 entity_two.collided = True
                 entity_two.collided_once = True
             else:

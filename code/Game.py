@@ -1,7 +1,9 @@
 import pygame
-from code.Const import MENU_OPTION
+from code.Const import MENU_OPTION, VICTORY_OPTION
+from code.GameOver import GameOver
 from code.Level import Level
 from code.Menu import Menu
+from code.Victory import Victory
 
 
 class Game:
@@ -18,17 +20,39 @@ class Game:
 
             if menu_return in [MENU_OPTION[0]]:
                 player_score = [0]
-                level = Level(self.window, 'Level1', menu_return, player_score)
-                level_return = level.run(player_score)
-                if level_return:
-                    level = Level(self.window, 'Level2', menu_return, player_score)
-                    level.run(player_score)
-                if level_return:
-                    level = Level(self.window, 'Level3', menu_return, player_score)
-                    level.run(player_score)
-                if level_return:
-                    level = Level(self.window, 'Level4', menu_return, player_score)
-                    level.run(player_score)
+                current_level = 'Level1'
+
+                while self.running:
+                    level = Level(self.window, current_level, menu_return, player_score)
+                    level_return = level.run(player_score)
+
+                    if not level_return:
+                        game_over = GameOver(self.window)
+                        choice = game_over.run()
+
+                        if choice == "REINICIAR":
+                            current_level = 'Level1'
+                            continue
+                        elif choice == "SAIR":
+                            self.running = False
+                            break
+
+                    if current_level == 'Level1' and level_return:
+                        current_level = 'Level2'
+                    elif current_level == 'Level2' and level_return:
+                        current_level = 'Level3'
+                    elif current_level == 'Level3' and level_return:
+                        current_level = 'Level4'
+                    elif current_level == 'Level4' and level_return:
+                        victory = Victory(self.window)
+                        choice = victory.run()
+
+                        if choice == VICTORY_OPTION[0]:
+                            current_level = 'Level1'
+                            continue
+                        elif choice == VICTORY_OPTION[1]:
+                            self.running = False
+                            break
 
             elif menu_return == MENU_OPTION[1]:
                 self.running = False

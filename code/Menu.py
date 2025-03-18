@@ -4,6 +4,7 @@ from pygame.font import Font
 
 from code.Const import WINDOW_WIDTH, COLOR_BUE, MENU_OPTION, COLOR_WHITE
 
+
 class Menu:
     def __init__(self, window):
         self.window = window
@@ -23,6 +24,7 @@ class Menu:
     def run(self):
         menu_option = 0
         pygame.mixer.music.load('./assets/Menu.mp3')
+        pygame.mixer.music.set_volume(0.5)
         pygame.mixer.music.play(-1)
 
         while self.running:
@@ -42,7 +44,9 @@ class Menu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                    return False
+                    pygame.mixer.music.stop()
+                    pygame.quit()
+                    exit()
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_DOWN:
