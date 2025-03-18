@@ -1,4 +1,4 @@
-##### Jump Cat 🐱 #####
+### Jump Cat 🐱
 
 **Jump Cat** é um jogo de plataforma 2D onde você controla um gato que precisa pular e desviar de obstáculos para avançar pelos níveis. 
 O objetivo é completar todos os níveis, acumular pontos e vencer o jogo!
