@@ -5,6 +5,7 @@ COLOR_WHITE = (255, 255, 255)
 COLOR_GREEN = (0, 128, 0)
 COLOR_CYAN = (0, 128, 128)
 COLOR_RED = (255, 0, 0)
+COLOR_YELLOW = (255, 255, 0)
 
 MENU_OPTION = (
     'NOVO JOGO',
@@ -12,6 +13,11 @@ MENU_OPTION = (
 )
 GAMEOVER_OPTION = (
     'REINICIAR',
+    'SAIR'
+)
+
+VICTORY_OPTION = (
+    'JOGAR NOVAMENTE',
     'SAIR'
 )
 
@@ -75,7 +81,7 @@ ENTITY_DAMAGE = {
     'Level4Bg3': 0,
     'Player1': 0,
     'Enemy1': 100,
-    'Enemy2': 200
+    'Enemy2': 150
 }
 
 ENTITY_SCORE = {
